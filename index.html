@@ -125,6 +125,7 @@
                     </div>
                     <p id="user-balance" class="text-white text-2xl font-bold">N/A</p>
                 </div>
+                <div class="glass-effect rounded-2xl p-6 border border-purple-400/30">
                     <div class="flex items-center space-x-3 mb-2">
                         <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-lg flex items-center justify-center">
                             <svg width="20" height="20" stroke-width="2" viewBox="0 0 24 24" fill="none" stroke="white">
@@ -177,14 +178,12 @@
         </div>
 
         <!-- Footer -->
-        <div class="text-center mt-6 text-purple-200 text-sm">
-            <p>Contract Address: <span class="font-mono" id="contract-address">0x82Ea82577f23700f2742A6671a9c07c39aa7091e</span></p>
-        </div>
-    </div>
-
+        <div class="text-center mt-6 text-purple-200 text-sm"></div>
+        
     <script type="text/javascript">
-        // Replace with your deployed contract address
         const FAUCET_CONTRACT_ADDRESS = '0x82Ea82577f23700f2742A6671a9c07c39aa7091e';
+        const BALANCE_CONTRACT_ADDRESS = '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14';
+        
         const FAUCET_ABI = [
             {
                 "inputs": [],
@@ -246,6 +245,7 @@
         let signer;
         let userAddress;
         let faucetContract;
+        let balanceContract;
 
         contractAddressEl.textContent = FAUCET_CONTRACT_ADDRESS;
 
@@ -268,7 +268,7 @@
                 const userBal = await signer.getBalance();
                 userBalanceEl.textContent = `${ethers.utils.formatEther(userBal).substring(0, 8)} ETH`;
 
-                const contractBal = await faucetContract.getBalance();
+                const contractBal = await balanceContract.getBalance();
                 contractBalanceEl.textContent = `${ethers.utils.formatEther(contractBal).substring(0, 8)} ETH`;
 
                 infoSection.classList.remove('hidden');
@@ -293,6 +293,7 @@
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 faucetContract = new ethers.Contract(FAUCET_CONTRACT_ADDRESS, FAUCET_ABI, signer);
+                balanceContract = new ethers.Contract(BALANCE_CONTRACT_ADDRESS, FAUCET_ABI, provider);
 
                 userAddressEl.textContent = userAddress;
                 connectBtn.classList.add('hidden');
@@ -368,5 +369,3 @@
     </script>
 </body>
 </html>
-
-
