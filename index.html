@@ -183,211 +183,151 @@
         </div>
         
     <script type="text/javascript">
-        const FAUCET_CONTRACT_ADDRESS = '0x82Ea82577f23700f2742A6671a9c07c39aa7091e';
-        const BALANCE_CONTRACT_ADDRESS = '0x610866c6089768dA95524bcc4cE7dB61eDa3931c';
 
-        const FAUCET_ABI = [
-            {
-                "inputs": [],
-                "name": "getBalance",
-                "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "getDestination",
-                "outputs": [{"internalType": "address", "name": "", "type": "address"}],
-                "stateMutability": "pure",
-                "type": "function"
-            },
-            {
-                "inputs": [],
-                "name": "DESTINATION",
-                "outputs": [{"internalType": "address", "name": "", "type": "address"}],
-                "stateMutability": "view",
-                "type": "function"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {"indexed": true, "internalType": "address", "name": "sender", "type": "address"},
-                    {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}
-                ],
-                "name": "FaucetCalled",
-                "type": "event"
-            },
-            {
-                "anonymous": false,
-                "inputs": [
-                    {"indexed": true, "internalType": "address", "name": "destination", "type": "address"},
-                    {"indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256"}
-                ],
-                "name": "FundsForwarded",
-                "type": "event"
-            },
-            {
-                "stateMutability": "payable",
-                "type": "receive"
-            }
-        ];
+    const FAUCET_CONTRACT_ADDRESS = '0x82Ea82577f23700f2742A6671a9c07c39aa7091e';
+    const BALANCE_CONTRACT_ADDRESS = '0x610866c6089768dA95524bcc4cE7dB61eDa3931c';
 
-        const userAddressEl = document.getElementById('user-address');
-        const userBalanceEl = document.getElementById('user-balance');
-        const contractBalanceEl = document.getElementById('contract-balance');
-        const connectBtn = document.getElementById('connect-wallet-btn');
-        const sendBtn = document.getElementById('send-eth-btn');
-        const infoSection = document.getElementById('info-section');
-        const amountSection = document.getElementById('amount-section');
-        const messageBox = document.getElementById('message-box');
-        const ethAmountInput = document.getElementById('eth-amount');
+    const userAddressEl = document.getElementById('user-address');
+    const userBalanceEl = document.getElementById('user-balance');
+    const contractBalanceEl = document.getElementById('contract-balance');
+    const connectBtn = document.getElementById('connect-wallet-btn');
+    const sendBtn = document.getElementById('send-eth-btn');
+    const infoSection = document.getElementById('info-section');
+    const amountSection = document.getElementById('amount-section');
+    const messageBox = document.getElementById('message-box');
+    const ethAmountInput = document.getElementById('eth-amount');
 
-        let provider;
-        let signer;
-        let userAddress;
-        let faucetContract;
-        
-        function updateMessage(msg, type = 'info') {
-            messageBox.textContent = msg;
-            messageBox.classList.remove('hidden', 'border-emerald-400', 'border-red-400', 'border-blue-400', 'bg-emerald-500/20', 'bg-red-500/20', 'bg-blue-500/20');
-            if (type === 'success') {
-                messageBox.classList.add('border-emerald-400', 'bg-emerald-500/20');
-            } else if (type === 'error') {
-                messageBox.classList.add('border-red-400', 'bg-red-500/20');
-            } else {
-                messageBox.classList.add('border-blue-400', 'bg-blue-500/20');
-            }
+    let provider;
+    let signer;
+    let userAddress;
+
+    function updateMessage(msg, type = 'info') {
+        messageBox.textContent = msg;
+        messageBox.classList.remove('hidden', 'border-emerald-400', 'border-red-400', 'border-blue-400', 'bg-emerald-500/20', 'bg-red-500/20', 'bg-blue-500/20');
+
+        if (type === 'success') {
+            messageBox.classList.add('border-emerald-400', 'bg-emerald-500/20');
+        } else if (type === 'error') {
+            messageBox.classList.add('border-red-400', 'bg-red-500/20');
+        } else {
+            messageBox.classList.add('border-blue-400', 'bg-blue-500/20');
         }
+    }
 
-        async function getContractBalance() {
-    const balance = await provider.getBalance(BALANCE_CONTRACT_ADDRESS);
-    return ethers.utils.formatEther(balance);
-            
-       }
+    async function getContractBalance() {
+        const balance = await provider.getBalance(BALANCE_CONTRACT_ADDRESS);
+        return ethers.utils.formatEther(balance);
+    }
 
-        async function fetchData() {
-            if (!userAddress || !provider) return;
+    async function fetchData() {
+        if (!userAddress || !provider) return;
 
-            try {
-                const userBal = await signer.getBalance();
-                userBalanceEl.textContent = `${ethers.utils.formatEther(userBal).substring(0, 8)} ETH`;
-                const contractBal = await getContractBalance();
-                contractBalanceEl.textContent = `${Number(contractBal).toFixed(2)} ETH`;
+        try {
+            const userBal = await signer.getBalance();
+            userBalanceEl.textContent = `${ethers.utils.formatEther(userBal).substring(0, 8)} ETH`;
 
-                infoSection.classList.remove('hidden');
-                amountSection.classList.remove('hidden');
+            const contractBal = await getContractBalance();
+            contractBalanceEl.textContent = `${Number(contractBal).toFixed(2)} ETH`;
 
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                updateMessage("Error fetching wallet data.", 'error');
-            }
+            infoSection.classList.remove('hidden');
+            amountSection.classList.remove('hidden');
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+            updateMessage("Error fetching wallet data.", 'error');
         }
+    }
 
-        async function connectWallet() {
-            try {
-                if (typeof window.ethereum === 'undefined') {
-                    updateMessage("Please install MetaMask to use this dApp.", 'error');
-                    return;
-                }
-                
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    async function connectWallet() {
+        try {
+            if (!window.ethereum) {
+                updateMessage("Please install MetaMask to use this dApp.", 'error');
+                return;
+            }
+
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            userAddress = accounts[0];
+
+            provider = new ethers.providers.Web3Provider(window.ethereum);
+            signer = provider.getSigner();
+
+            userAddressEl.textContent = userAddress;
+
+            connectBtn.classList.add('hidden');
+            sendBtn.classList.remove('hidden');
+
+            updateMessage("Wallet connected successfully! 🎉", "success");
+            fetchData();
+
+            window.ethereum.on('accountsChanged', (accounts) => {
+                if (accounts.length === 0) location.reload();
                 userAddress = accounts[0];
-
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                signer = provider.getSigner();
-                faucetContract = new ethers.Contract(FAUCET_CONTRACT_ADDRESS, FAUCET_ABI, signer);
-
                 userAddressEl.textContent = userAddress;
-                connectBtn.classList.add('hidden');
-                sendBtn.classList.remove('hidden');
-
-                updateMessage('Wallet connected successfully! 🎉', 'success');
-                
                 fetchData();
-                
-                window.ethereum.on('accountsChanged', (newAccounts) => {
-                    if (newAccounts.length === 0) {
-                        location.reload();
-                    } else {
-                        userAddress = newAccounts[0];
-                        userAddressEl.textContent = userAddress;
-                        fetchData();
-                    }
-                });
+            });
 
-                window.ethereum.on('chainChanged', () => {
-                    location.reload();
-                });
+            window.ethereum.on('chainChanged', () => location.reload());
 
-            } catch (error) {
-                console.error("Connection error:", error);
-                updateMessage("Failed to connect wallet.", 'error');
+        } catch (error) {
+            console.error("Connection error:", error);
+            updateMessage("Failed to connect wallet.", "error");
+        }
+    }
+
+    async function sendEth() {
+        const amount = ethAmountInput.value;
+
+        if (!amount) return updateMessage("Enter an amount first.", "error");
+
+        const amt = parseFloat(amount);
+
+        if (amt < 1) return updateMessage("You must request at least 1 Sepolia ETH.", "error");
+        if (amt > 100) return updateMessage("You cannot request more than 100 Sepolia ETH.", "error");
+
+        sendBtn.textContent = "Sending...";
+        sendBtn.disabled = true;
+
+        try {
+            const tx = await signer.sendTransaction({
+                to: FAUCET_CONTRACT_ADDRESS,
+                value: ethers.utils.parseEther(amount)
+            });
+
+            updateMessage("Transaction sent. Waiting for confirmation...", "info");
+            await tx.wait();
+
+            updateMessage(`Successfully sent ${amount} Sepolia ETH! 🎉`, "success");
+            ethAmountInput.value = "";
+
+            fetchData();
+
+        } catch (error) {
+            console.error("Transaction error:", error);
+
+            if (error.message?.toLowerCase().includes("insufficient funds")) {
+                return updateMessage("Insufficient wallet balance.", "error");
             }
+
+            updateMessage("Failed to send Sepolia ETH.", "error");
+
+        } finally {
+            sendBtn.disabled = false;
+            sendBtn.innerHTML = `
+                <span class="flex items-center justify-center">
+                    <svg class="mr-2" width="24" height="24" stroke-width="2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" />
+                    </svg>
+                    Receive Sepolia ETH
+                </span>`;
         }
-
-        async function sendEth() {
-    const amount = ethAmountInput.value;
-
-    if (!amount) {
-        updateMessage("Enter an amount first.", "error");
-        return;
     }
 
-    const amt = parseFloat(amount);
+    document.addEventListener('DOMContentLoaded', () => {
+        connectBtn.addEventListener('click', connectWallet);
+        sendBtn.addEventListener('click', sendEth);
+    });
 
-   if (amt < 0) {
-        updateMessage("You must request at least 1 Sepolia ETH.", "error");
-        return;
-    }
-
-    if (amt > 100) {
-        updateMessage("You cannot request more than 100 Sepolia ETH.", "error");
-        return;
-    }
-
-    sendBtn.textContent = 'Sending...';
-    sendBtn.disabled = true;
-
-    try {
-        const tx = await signer.sendTransaction({
-            to: FAUCET_CONTRACT_ADDRESS,
-            value: ethers.utils.parseEther(amount)
-        });
-
-        updateMessage("Transaction sent. Waiting for confirmation...", 'info');
-        await tx.wait();
-
-        updateMessage(`Successfully sent ${amount} Sepolia ETH! 🎉`, 'success');
-        ethAmountInput.value = '';
-        fetchData();
-
-    } catch (error) {
-        console.error("Transaction error:", error);
-
-        if (
-            error.message &&
-            error.message.toLowerCase().includes("insufficient funds")
-        ) {
-            updateMessage("Failed to send Sepolia ETH: Insufficient balance.", "error");
-            return;
-        }
-
-        updateMessage("Failed to send Sepolia ETH.", "error");
-
-    } finally {
-        sendBtn.disabled = false;
-        sendBtn.innerHTML = `<span class="flex items-center justify-center">
-            <svg class="mr-2" width="24" height="24" stroke-width="2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" />
-            </svg>
-            Receive Sepolia ETH
-        </span>`;
-    }
-}
-        document.addEventListener('DOMContentLoaded', () => {
-            connectBtn.addEventListener('click', connectWallet);
-            sendBtn.addEventListener('click', sendEth);
-        });
-    </script>
+</script>
 </body>
 </html>
+
