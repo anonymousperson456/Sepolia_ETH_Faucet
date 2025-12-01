@@ -179,8 +179,7 @@
         <!-- Footer -->
         <div class="text-center mt-6 text-purple-200 text-sm">
             <p class="text-purple-300 text-sm">
-                Faucet Contract Address:
-                <span id="contract-address" class="text-purple-100 break-all"></span>
+                Faucet Contract Address: 0x610866c6089768dA95524bcc4cE7dB61eDa3931c
             </p>
         </div>
         
@@ -243,15 +242,12 @@
         const amountSection = document.getElementById('amount-section');
         const messageBox = document.getElementById('message-box');
         const ethAmountInput = document.getElementById('eth-amount');
-        const contractAddressEl = document.getElementById('contract-address');
 
         let provider;
         let signer;
         let userAddress;
         let faucetContract;
-
-        contractAddressEl.textContent = BALANCE_CONTRACT_ADDRESS;
-
+        
         function updateMessage(msg, type = 'info') {
             messageBox.textContent = msg;
             messageBox.classList.remove('hidden', 'border-emerald-400', 'border-red-400', 'border-blue-400', 'bg-emerald-500/20', 'bg-red-500/20', 'bg-blue-500/20');
@@ -377,6 +373,7 @@
     </script>
 </body>
 </html>
+
 
 
 
