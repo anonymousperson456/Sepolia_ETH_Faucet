@@ -330,7 +330,19 @@
             const amount = ethAmountInput.value;
             
             if (!amount) {
-    updateMessage("Please enter an amount.", "error");
+    catch (error) {
+    console.error("Transaction error:", error);
+                
+    if (
+        error.message &&
+        error.message.toLowerCase().includes("insufficient funds")
+    ) {
+        updateMessage("Failed to send Sepolia ETH: Insufficient balance.", "error");
+        return;
+    }
+                
+    updateMessage("Failed to send Sepolia ETH.", "error");
+}
     return;
 }
 
@@ -388,6 +400,7 @@ if (amt !== 10) {
     </script>
 </body>
 </html>
+
 
 
 
