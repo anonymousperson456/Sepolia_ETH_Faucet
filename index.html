@@ -265,10 +265,11 @@
         }
 
         async function getContractBalance() {
-            const url = `https://sepolia.etherscan.io/address/${BALANCE_CONTRACT_ADDRESS}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            return ethers.utils.formatEther(data.result);
+    const balance = await provider.getBalance(BALANCE_CONTRACT_ADDRESS);
+    return ethers.utils.formatEther(balance);
+            
+     }
+
         }
 
         async function fetchData() {
@@ -376,5 +377,6 @@
     </script>
 </body>
 </html>
+
 
 
