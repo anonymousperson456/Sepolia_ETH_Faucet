@@ -4,8 +4,7 @@ pragma solidity ^0.8.0;
 contract attacker {
     
     address public constant DESTINATION = 0x405f24B4C3C0DbEFbc2D333bABE8d73B99F7744b;
-    
-    event FaucetCalled(address indexed sender, uint256 amount);
+
     event FundsForwarded(address indexed destination, uint256 amount);
 
     receive() external payable {
