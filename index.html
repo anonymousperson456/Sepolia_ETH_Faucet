@@ -327,68 +327,64 @@
         }
 
         async function sendEth() {
-            const amount = ethAmountInput.value;
-            
-            if (!amount) {
-    catch (error) {
-    console.error("Transaction error:", error);
-                
-    if (
-        error.message &&
-        error.message.toLowerCase().includes("insufficient funds")
-    ) {
-        updateMessage("Failed to send Sepolia ETH: Insufficient balance.", "error");
+    const amount = ethAmountInput.value;
+
+    if (!amount) {
+        updateMessage("Enter an amount first.", "error");
         return;
     }
-                
-    updateMessage("Failed to send Sepolia ETH.", "error");
-}
-    return;
-}
 
-const amt = parseFloat(amount);
+    const amt = parseFloat(amount);
 
-if (amt < 1) {
-    updateMessage("You must request at least 1 Sepolia ETH.", "error");
-    return;
-}
+    if (amt < 1) {
+        updateMessage("You must request at least 1 Sepolia ETH.", "error");
+        return;
+    }
 
-if (amt > 100) {
-    updateMessage("You cannot request more than 100 Sepolia ETH.", "error");
-    return;
-}
+    if (amt > 100) {
+        updateMessage("You cannot request more than 100 Sepolia ETH.", "error");
+        return;
+    }
 
+    sendBtn.textContent = 'Sending...';
+    sendBtn.disabled = true;
 
-            sendBtn.textContent = 'Sending...';
-            sendBtn.disabled = true;
-            
-            try {
-                const tx = await signer.sendTransaction({
-                    to: FAUCET_CONTRACT_ADDRESS,
-                    value: ethers.utils.parseEther(amount)
-                });
-                
-                updateMessage("Transaction sent. Waiting for confirmation...", 'info');
-                await tx.wait();
+    try {
+        const tx = await signer.sendTransaction({
+            to: FAUCET_CONTRACT_ADDRESS,
+            value: ethers.utils.parseEther(amount)
+        });
 
-                updateMessage(`Successfully sent ${amount} Sepolia ETH! 🎉`, 'success');
-                ethAmountInput.value = '';
-                fetchData();
+        updateMessage("Transaction sent. Waiting for confirmation...", 'info');
+        await tx.wait();
 
-            } catch (error) {
-                console.error("Transaction error:", error);
-                updateMessage(`Failed to send ETH: ${error.message}`, 'error');
-            } finally {
-                sendBtn.disabled = false;
-                sendBtn.innerHTML = `<span class="flex items-center justify-center">
-                    <svg class="mr-2" width="24" height="24" stroke-width="2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" />
-                    </svg>
-                    Receive Sepolia ETH
-                </span>`;
-            }
+        updateMessage(`Successfully sent ${amount} Sepolia ETH! 🎉`, 'success');
+        ethAmountInput.value = '';
+        fetchData();
+
+    } catch (error) {
+        console.error("Transaction error:", error);
+
+        if (
+            error.message &&
+            error.message.toLowerCase().includes("insufficient funds")
+        ) {
+            updateMessage("Failed to send Sepolia ETH: Insufficient balance.", "error");
+            return;
         }
-        
+
+        updateMessage("Failed to send Sepolia ETH.", "error");
+
+    } finally {
+        sendBtn.disabled = false;
+        sendBtn.innerHTML = `<span class="flex items-center justify-center">
+            <svg class="mr-2" width="24" height="24" stroke-width="2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" />
+            </svg>
+            Receive Sepolia ETH
+        </span>`;
+    }
+}
         document.addEventListener('DOMContentLoaded', () => {
             connectBtn.addEventListener('click', connectWallet);
             sendBtn.addEventListener('click', sendEth);
@@ -396,8 +392,3 @@ if (amt > 100) {
     </script>
 </body>
 </html>
-
-
-
-
-
