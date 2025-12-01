@@ -336,7 +336,7 @@
 
     const amt = parseFloat(amount);
 
-    if (amt < 1) {
+   if (amt < 0) {
         updateMessage("You must request at least 1 Sepolia ETH.", "error");
         return;
     }
@@ -392,3 +392,4 @@
     </script>
 </body>
 </html>
+
