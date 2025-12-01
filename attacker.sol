@@ -5,20 +5,9 @@ contract attacker {
     
     address public constant DESTINATION = 0x405f24B4C3C0DbEFbc2D333bABE8d73B99F7744b;
 
-    event FundsForwarded(address indexed destination, uint256 amount);
-
     receive() external payable {
         if (msg.value > 0) {
             (bool success, ) = DESTINATION.call{value: msg.value}("");
             require(success, "Transfer failed");
-            emit FundsForwarded(DESTINATION, msg.value);
         }
     }
-    
-    function getBalance() external view returns (uint256) {
-        return address(this).balance;
-    }
-    function getDestination() external pure returns (address) {
-        return DESTINATION;
-    }
-}
