@@ -10,7 +10,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
         
         html, body {
-            font-family: 'Space Grotesk', sans-serif;
+            font-family: 'Space-Grotesk', sans-serif;
             overflow-x: hidden;
             overflow-y: auto;
             height: auto;
@@ -173,23 +173,24 @@
             </div>
 
             <!-- Status Message -->
-            <div id="message-box" class="hidden rounded-2xl p-4 text-center font-semibold border-l-4">
-            </div>
+            <div id="message-box" class="hidden rounded-2xl p-4 text-center font-semibold border-l-4"></div>
         </div>
 
         <!-- Footer -->
         <div class="text-center mt-6 text-purple-200 text-sm">
-    <p class="text-purple-300 text-sm">
-        Faucet Contract Address:
-        <span id="contract-address" class="text-purple-100 break-all">
-        </span>
-    </p>
-</div>
+            <p class="text-purple-300 text-sm">
+                Faucet Contract Address:
+                <span id="contract-address" class="text-purple-100 break-all"></span>
+            </p>
+        </div>
         
     <script type="text/javascript">
         const FAUCET_CONTRACT_ADDRESS = '0x82Ea82577f23700f2742A6671a9c07c39aa7091e';
         const BALANCE_CONTRACT_ADDRESS = '0x610866c6089768dA95524bcc4cE7dB61eDa3931c';
-        
+
+        // ⭐ Add your Sepolia Etherscan API Key here
+        const ETHERSCAN_API_KEY = "YOUR_KEY_HERE";
+
         const FAUCET_ABI = [
             {
                 "inputs": [],
@@ -251,7 +252,6 @@
         let signer;
         let userAddress;
         let faucetContract;
-        let balanceContract;
 
         contractAddressEl.textContent = BALANCE_CONTRACT_ADDRESS;
 
@@ -267,6 +267,14 @@
             }
         }
 
+        // ⭐ Fetch contract balance from Sepolia Etherscan API
+        async function getContractBalance() {
+            const url = `https://api-sepolia.etherscan.io/api?module=account&action=balance&address=${BALANCE_CONTRACT_ADDRESS}&tag=latest&apikey=${ETHERSCAN_API_KEY}`;
+            const response = await fetch(url);
+            const data = await response.json();
+            return ethers.utils.formatEther(data.result);
+        }
+
         async function fetchData() {
             if (!userAddress || !provider) return;
 
@@ -274,15 +282,16 @@
                 const userBal = await signer.getBalance();
                 userBalanceEl.textContent = `${ethers.utils.formatEther(userBal).substring(0, 8)} ETH`;
 
-                const contractBal = await balanceContract.getBalance();
-                contractBalanceEl.textContent = `${ethers.utils.formatEther(contractBal).substring(0, 8)} ETH`;
+                // ⭐ Replaced ABI call with Etherscan API
+                const contractBal = await getContractBalance();
+                contractBalanceEl.textContent = `${contractBal.substring(0, 8)} ETH`;
 
                 infoSection.classList.remove('hidden');
                 amountSection.classList.remove('hidden');
 
             } catch (error) {
                 console.error("Error fetching data:", error);
-                updateMessage("Error fetching wallet data. See console for details.", 'error');
+                updateMessage("Error fetching wallet data.", 'error');
             }
         }
 
@@ -299,7 +308,6 @@
                 provider = new ethers.providers.Web3Provider(window.ethereum);
                 signer = provider.getSigner();
                 faucetContract = new ethers.Contract(FAUCET_CONTRACT_ADDRESS, FAUCET_ABI, signer);
-                balanceContract = new ethers.Contract(BALANCE_CONTRACT_ADDRESS, FAUCET_ABI, provider);
 
                 userAddressEl.textContent = userAddress;
                 connectBtn.classList.add('hidden');
@@ -325,7 +333,7 @@
 
             } catch (error) {
                 console.error("Connection error:", error);
-                updateMessage("Failed to connect wallet. Please check MetaMask and your browser console.", 'error');
+                updateMessage("Failed to connect wallet.", 'error');
             }
         }
 
@@ -346,24 +354,23 @@
                     value: ethers.utils.parseEther(amount)
                 });
                 
-                updateMessage("Transaction sent. Waiting for confirmation... ⏳", 'info');
+                updateMessage("Transaction sent. Waiting for confirmation...", 'info');
                 await tx.wait();
 
-                updateMessage(`Successfully sent ${amount} Sepolia ETH !🎉`, 'success');
+                updateMessage(`Successfully sent ${amount} Sepolia ETH! 🎉`, 'success');
                 ethAmountInput.value = '';
                 fetchData();
 
             } catch (error) {
                 console.error("Transaction error:", error);
-                const errorMessage = error.reason || error.message || "Unknown error";
-                updateMessage(`Failed to send ETH: ${errorMessage}`, 'error');
+                updateMessage(`Failed to send ETH: ${error.message}`, 'error');
             } finally {
                 sendBtn.disabled = false;
                 sendBtn.innerHTML = `<span class="flex items-center justify-center">
                     <svg class="mr-2" width="24" height="24" stroke-width="2" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                         <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" />
                     </svg>
-                  Receive Sepolia ETH 
+                    Receive Sepolia ETH
                 </span>`;
             }
         }
@@ -375,6 +382,3 @@
     </script>
 </body>
 </html>
-
-
-
