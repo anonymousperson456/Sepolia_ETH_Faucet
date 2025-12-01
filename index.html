@@ -281,7 +281,7 @@
 
         const amt = parseFloat(amount);
 
-        if (amt < 1) return updateMessage("You must request at least 1 Sepolia ETH.", "error");
+        if (amt < 0) return updateMessage("You must request at least 1 Sepolia ETH.", "error");
         if (amt > 100) return updateMessage("You cannot request more than 100 Sepolia ETH.", "error");
 
         sendBtn.textContent = "Sending...";
@@ -330,4 +330,5 @@
 </script>
 </body>
 </html>
+
 
