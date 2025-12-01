@@ -115,6 +115,7 @@
             <!-- Balance Info Grid -->
             <div id="info-section" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="glass-effect rounded-2xl p-6 border border-purple-400/30">
+                    <div class="flex items-center space-x-3 mb-2">
                         <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                             <svg width="20" height="20" stroke-width="2" viewBox="0 0 24 24" fill="none" stroke="white">
                                 <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h12a2 2 0 0 1 0 4H5a2 2 0 0 1 0 4h12a2 2 0 0 0 2-2v-4a1 1 0 0 0-1-1H9a1 1 0 0 0 0 2h7" />
@@ -132,6 +133,9 @@
                         </div>
                         <p class="text-purple-200 text-sm font-medium">Contract Balance</p>
                     </div>
+                    <p id="contract-balance" class="text-white text-2xl font-bold">N/A</p>
+                </div>
+            </div>
 
             <!-- Amount Input -->
             <div id="amount-section" class="hidden glass-effect rounded-2xl p-6">
@@ -173,7 +177,10 @@
         </div>
 
         <!-- Footer -->
-        <div class="text-center mt-6 text-purple-200 text-sm"></div>
+        <div class="text-center mt-6 text-purple-200 text-sm">
+            <p>Contract Address: <span class="font-mono" id="contract-address">0x82Ea82577f23700f2742A6671a9c07c39aa7091e</span></p>
+        </div>
+    </div>
 
     <script type="text/javascript">
         // Replace with your deployed contract address
@@ -361,7 +368,5 @@
     </script>
 </body>
 </html>
-
-
 
 
