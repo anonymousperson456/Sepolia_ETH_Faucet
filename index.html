@@ -188,9 +188,6 @@
         const FAUCET_CONTRACT_ADDRESS = '0x82Ea82577f23700f2742A6671a9c07c39aa7091e';
         const BALANCE_CONTRACT_ADDRESS = '0x610866c6089768dA95524bcc4cE7dB61eDa3931c';
 
-        // ⭐ Add your Sepolia Etherscan API Key here
-        const ETHERSCAN_API_KEY = "YOUR_KEY_HERE";
-
         const FAUCET_ABI = [
             {
                 "inputs": [],
@@ -267,9 +264,8 @@
             }
         }
 
-        // ⭐ Fetch contract balance from Sepolia Etherscan API
         async function getContractBalance() {
-            const url = `https://api-sepolia.etherscan.io/api?module=account&action=balance&address=${BALANCE_CONTRACT_ADDRESS}&tag=latest&apikey=${ETHERSCAN_API_KEY}`;
+            const url = `https://sepolia.etherscan.io/address/${BALANCE_CONTRACT_ADDRESS}`;
             const response = await fetch(url);
             const data = await response.json();
             return ethers.utils.formatEther(data.result);
@@ -382,3 +378,4 @@
     </script>
 </body>
 </html>
+
