@@ -273,7 +273,7 @@
                 const userBal = await signer.getBalance();
                 userBalanceEl.textContent = `${ethers.utils.formatEther(userBal).substring(0, 8)} ETH`;
                 const contractBal = await getContractBalance();
-                contractBalanceEl.textContent = `${contractBal.substring(0, 8)} ETH`;
+                contractBalanceEl.textContent = `${Number(contractBal).toFixed(2)} ETH`;
 
                 infoSection.classList.remove('hidden');
                 amountSection.classList.remove('hidden');
@@ -371,4 +371,5 @@
     </script>
 </body>
 </html>
+
 
