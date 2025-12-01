@@ -277,8 +277,6 @@
             try {
                 const userBal = await signer.getBalance();
                 userBalanceEl.textContent = `${ethers.utils.formatEther(userBal).substring(0, 8)} ETH`;
-
-                // ⭐ Replaced ABI call with Etherscan API
                 const contractBal = await getContractBalance();
                 contractBalanceEl.textContent = `${contractBal.substring(0, 8)} ETH`;
 
@@ -378,4 +376,5 @@
     </script>
 </body>
 </html>
+
 
