@@ -234,7 +234,7 @@
 
         } catch (error) {
             console.error("Error fetching data:", error);
-            updateMessage("Error fetching wallet data.", 'error');
+            updateMessage("Error Fetching Wallet Data.", 'error');
         }
     }
 
@@ -296,7 +296,7 @@
             updateMessage("Transaction Sent. Waiting For Confirmation...", "info");
             await tx.wait();
 
-            updateMessage(`Successfully Sent ${amount} Sepolia ETH! 🎉`, "success");
+            updateMessage(`Successfully Sent ${amount} Sepolia ETH! To Your Wallet Address🎉`, "success");
             ethAmountInput.value = "";
 
             fetchData();
@@ -304,7 +304,7 @@
         } catch (error) {
             console.error("Transaction error:", error);
 
-            if (error.message?.toLowerCase().includes("Insufficient Funds, You Must Have Atleast 1 Sepolia ETH In Your Wallet In Order To Request From This Faucet")) {
+            if (error.message?.toLowerCase().includes("Insufficient Funds")) {
                 return updateMessage("Request Slightly Less Then Your Wallet Balance Which Ranges Between 1 - 100", "error");
             }
 
@@ -330,6 +330,7 @@
 </script>
 </body>
 </html>
+
 
 
 
