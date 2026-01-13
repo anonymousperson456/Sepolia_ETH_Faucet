@@ -304,7 +304,7 @@
         } catch (error) {
             console.error("Transaction error:", error);
 
-            if (error.message?.toLowerCase().includes("Insufficient Funds")) {
+            if (error.message?.toLowerCase().includes("insufficient funds")) {
                 return updateMessage("Request Slightly Less Then Your Wallet Balance Which Ranges Between 1 - 100", "error");
             }
 
@@ -330,3 +330,4 @@
 </script>
 </body>
 </html>
+
