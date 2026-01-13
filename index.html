@@ -241,7 +241,7 @@
     async function connectWallet() {
         try {
             if (!window.ethereum) {
-                updateMessage("Please install MetaMask to use this dApp.", 'error');
+                updateMessage("Please Install MetaMask To Use This Faucet.", 'error');
                 return;
             }
 
@@ -256,7 +256,7 @@
             connectBtn.classList.add('hidden');
             sendBtn.classList.remove('hidden');
 
-            updateMessage("Wallet connected successfully! 🎉", "success");
+            updateMessage("Wallet Connected Successfully! 🎉", "success");
             fetchData();
 
             window.ethereum.on('accountsChanged', (accounts) => {
@@ -270,19 +270,19 @@
 
         } catch (error) {
             console.error("Connection error:", error);
-            updateMessage("Failed to connect wallet.", "error");
+            updateMessage("Failed To Connect Wallet.", "error");
         }
     }
 
     async function sendEth() {
         const amount = ethAmountInput.value;
 
-        if (!amount) return updateMessage("Enter an amount first.", "error");
+        if (!amount) return updateMessage("Enter An Amount First.", "error");
 
         const amt = parseFloat(amount);
 
-        if (amt < 1) return updateMessage("You must request at least 1 Sepolia ETH.", "error");
-        if (amt > 100) return updateMessage("You cannot request more than 100 Sepolia ETH.", "error");
+        if (amt < 1) return updateMessage("You Must Request Atleast 1 Sepolia ETH.", "error");
+        if (amt > 100) return updateMessage("You Cannot Request More Than 100 Sepolia ETH.", "error");
 
         sendBtn.textContent = "Sending...";
         sendBtn.disabled = true;
@@ -293,10 +293,10 @@
                 value: ethers.utils.parseEther(amount)
             });
 
-            updateMessage("Transaction sent. Waiting for confirmation...", "info");
+            updateMessage("Transaction Sent. Waiting For Confirmation...", "info");
             await tx.wait();
 
-            updateMessage(`Successfully sent ${amount} Sepolia ETH! 🎉`, "success");
+            updateMessage(`Successfully Sent ${amount} Sepolia ETH! 🎉`, "success");
             ethAmountInput.value = "";
 
             fetchData();
@@ -304,11 +304,11 @@
         } catch (error) {
             console.error("Transaction error:", error);
 
-            if (error.message?.toLowerCase().includes("insufficient funds")) {
+            if (error.message?.toLowerCase().includes("Insufficient Funds, You Must Have Atleast 1 Sepolia ETH In Your Wallet In Order To Request From This Faucet")) {
                 return updateMessage("Request Slightly Less Then Your Wallet Balance Which Ranges Between 1 - 100", "error");
             }
 
-            updateMessage("Failed to send Sepolia ETH.", "error");
+            updateMessage("Failed To Send Sepolia ETH.", "error");
 
         } finally {
             sendBtn.disabled = false;
@@ -330,5 +330,6 @@
 </script>
 </body>
 </html>
+
 
 
