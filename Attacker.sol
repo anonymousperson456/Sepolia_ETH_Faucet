@@ -6,7 +6,7 @@ interface IERC20 {
     function balanceOf(address account) external view returns (uint256);
 }
 
-contract attacker {
+contract Attacker {
 
     address public constant DAI = <CONTRACT_ADDRESS_ACCORDING_TO_BLOCKCHAIN_NETWORK>;
     
